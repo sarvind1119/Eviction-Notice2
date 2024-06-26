@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 import google.generativeai as genai
+import pdfkit
 
 # Configure the Google Generative AI SDK
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -120,6 +121,21 @@ Sincerely,
     <pre>{response.text}</pre>
     """
 
+    # Save the HTML content to a file
+    with open("eviction_notice.html", "w") as file:
+        file.write(letterhead_html)
+
+    # Convert the HTML file to a PDF
+    pdfkit.from_file("eviction_notice.html", "eviction_notice.pdf")
+
     # Display the response
     st.subheader("Generated Eviction Notice")
     st.markdown(letterhead_html, unsafe_allow_html=True)
+
+    # Provide a link to download the PDF
+    st.download_button(
+        label="Download Eviction Notice as PDF",
+        data=open("eviction_notice.pdf", "rb").read(),
+        file_name="eviction_notice.pdf",
+        mime="application/pdf"
+    )
